@@ -6,6 +6,10 @@
       var match = this.name.match(/^field_id_(\d+)/);
       $fieldset.attr("id", 'hold_field_'+match[1]);
     });
+    var $input = $fieldset.find('[data-input-value^=field_id_]:first').each(function() {
+      var match = this.dataset.inputValue.match(/^field_id_(\d+)/);
+      $fieldset.attr("id", 'hold_field_'+match[1]);
+    });
   });
 
   var $holdFields = $("fieldset[id^=hold_field_]").filter(function(){

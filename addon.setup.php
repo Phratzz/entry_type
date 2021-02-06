@@ -2,12 +2,12 @@
 
 return array(
     'name'              => 'Entry Type',
-    'version'           => '4.0.0',
+    'version'           => '6.0.0',
     'description'       => 'A fieldtype for hiding publish fields on a conditional basis.',
     'namespace'         => '\\',
-    'author'            => 'Rob Sanchez',
-    'author_url'        => 'https://github.com/rsanchez',
-    'docs_url'          => 'https://github.com/rsanchez/entry_type',
+    'author'            => 'Anders Larsen',
+    'author_url'        => 'https://github.com/phratzz',
+    'docs_url'          => 'https://github.com/phratzz/entry_type',
     'settings_exist'    => false,
     'fieldtypes'        => array(
         'entry_type' => array(
