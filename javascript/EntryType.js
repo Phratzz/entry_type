@@ -6,6 +6,7 @@
       var match = this.name.match(/^field_id_(\d+)/);
       $fieldset.attr("id", 'hold_field_'+match[1]);
     });
+
     var $input = $fieldset.find('[data-input-value^=field_id_]:first').each(function() {
       var match = this.dataset.inputValue.match(/^field_id_(\d+)/);
       $fieldset.attr("id", 'hold_field_'+match[1]);
@@ -27,7 +28,7 @@
 
   // add grid fields
   var $gridHoldFields = $(".fieldset-faux").filter(function() {
-    var match = $(this).find(".grid-input-form").attr("id").match(/^field_id_(\d+)$/);
+    var match = $(this).find(".grid-field").attr("id").match(/^field_id_(\d+)$/);
 
     if (match) {
       $(this).addClass('entry-type-field-'+match[1]);

@@ -161,13 +161,13 @@ class Entry_type_ft extends EE_Fieldtype
         return form_dropdown($this->field_name, $options, $current_value);
     }
 
-    protected function fields($group_id = false, $exclude_field_id = false)
+    protected function fields($group_ids = false, $exclude_field_id = false)
     {
         static $cache;
 
-        if ($group_id === false) {
-            if (isset($this->settings['group_id'])) {
-                $group_id = $this->settings['group_id'];
+        if ($group_ids === false) {
+            if (isset($this->settings['group_ids'])) {
+                $group_ids = $this->settings['group_ids'];
             } else {
                 return array();
             }
@@ -177,28 +177,32 @@ class Entry_type_ft extends EE_Fieldtype
             $exclude_field_id = $this->field_id;
         }
 
-        if (!isset($cache[$group_id])) {
-            ee()->load->model('field_model');
-
-            $query = ee()->field_model->get_fields($group_id);
-
-            $cache[$group_id] = array();
-
-            foreach ($query->result() as $row) {
-                $cache[$group_id][$row->field_id] = $row->field_label;
+        foreach ($group_ids as $group_id) {
+            if (!isset($cache[$group_id])) {
+                ee()->load->model('field_model');
+    
+                $query = ee()->field_model->get_fields($group_id);
+    
+                $cache[$group_id] = array();
+    
+                foreach ($query->result() as $row) {
+                    $cache[$group_id][$row->field_id] = $row;
+                }
+    
+                $query->free_result();
             }
-
-            $query->free_result();
         }
 
-        $fields = $cache[$group_id];
+        $fields = $cache;
 
         if ($exclude_field_id) {
-            foreach ($fields as $field_id => $field_label) {
-                if ($exclude_field_id == $field_id) {
-                    unset($fields[$field_id]);
+            foreach ($fields as $field_key => $field_category) {
+                foreach ($field_category as $field_id => $field_label) {
+                    if ($exclude_field_id == $field_id) {
+                        unset($fields[$field_key][$field_id]);
 
-                    break;
+                        break;
+                    }
                 }
             }
         }
@@ -215,7 +219,7 @@ class Entry_type_ft extends EE_Fieldtype
         $action = ee()->uri->segment(3);
 
         if ($action === 'create') {
-            $this->settings['group_id'] = ee()->uri->segment(4);
+            $this->settings['group_ids'] = ee()->uri->segment(4);
 
             $this->field_id = null;
         } else {
@@ -225,8 +229,10 @@ class Entry_type_ft extends EE_Fieldtype
                 ->from('channel_field_groups_fields')
                 ->where('field_id', $this->field_id)
                 ->get();
-
-            $this->settings['group_id'] = $query->row('group_id');
+            
+            foreach($query->result_array() as $row) {
+                $this->settings['group_ids'][] = $row['group_id'];
+            }
         }
 
         ee()->load->library('api');
@@ -253,8 +259,8 @@ class Entry_type_ft extends EE_Fieldtype
 
         $vars['fields'] = array();
 
-        if (!empty($this->settings['group_id'])) {
-            $vars['fields'] = $this->fields($this->settings['group_id'], $this->field_id);
+        if (!empty($this->settings['group_ids'])) {
+            $vars['fields'] = $this->fields($this->settings['group_ids'], $this->field_id);
         }
 
         if (empty($settings['type_options'])) {
